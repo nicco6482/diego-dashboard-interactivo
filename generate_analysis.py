@@ -14,8 +14,15 @@ from statsmodels.stats.diagnostic import acorr_ljungbox
 warnings.filterwarnings("ignore")
 
 # ── 1. DATOS ──────────────────────────────────────────────────────────────────
-df = pd.read_csv("Ordinaria_DGAO_datosR.csv")
-valores = df["Valor"].values.astype(float)
+# El CSV usa coma como separador decimal (formato europeo, read.csv2 en R).
+# Lectura correcta: reemplazar coma decimal por punto.
+with open("Ordinaria_DGAO_datosR.csv", "r", encoding="utf-8") as _f:
+    _lines = _f.readlines()
+valores = np.array([
+    float(line.strip().replace(",", "."))
+    for line in _lines[1:]   # saltar cabecera
+    if line.strip()
+])
 n = len(valores)
 t_index = np.arange(n) / 7.0  # índice temporal como en R: start=c(1,3), step=1/7
 
